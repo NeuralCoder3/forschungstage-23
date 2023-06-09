@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta name="description" content="Forschungstage 2023: Beweisen ist auch nur Programmieren" />
+
+    <title>Forschungstage 2023: Beweisen ist auch nur Programmieren (Teil 2)</title>
+  </head>
+
+<body>
+  <div id="ide-wrapper" class="toggled">
+  <div id="code-wrapper">
+  <div id="document">
+  <div>
+    <h1>Forschungstage 2023: Interaktives Beweisen (Teil 1)</h1>
+  </div>
+  
+    <div>
+    <p> Wir initialisieren Coq und widerholen die Definition of Listen.</p>
+    <textarea id="addnC" >
+Require Import Init.Prelude Unicode.Utf8.
+Require Import Lia. 
+Import Compare_dec.
+
+Inductive list  : Type :=
+|nil : list
+|cons (x:nat) (xs:list): list.
+
+Infix "::" := cons (at level 60, right associativity).
+
+Notation "'inc'" := S. 
+Notation is_leq := le_gt_dec.
+Tactic Notation "case_analysis_is_leq" ident(x) ident(y) := (destruct (le_gt_dec x y)).</textarea>
+  </div>
+
+<div>
+<h3>Abschnitt 0: Benötigte Grundlagen</h3>
+
+<h4>Die Taktik <code>lia</code> für numerische Goals</h4>
+  
+  <p>In Coq stellt <code>x <= y</code> die Aussage "x ist kleiner oder gleich y" dar.
+   Wenn numerische Aussagen zu beweisen sind, z.B. kleiner-gleich-Aussagen, können wir die Taktik <code>lia</code> benutzen. Diese Taktik versucht
+   die zu zeigende numerische Aussage aus den Annahmen zu beweisen. Für unsere Fälle reicht diese Taktik aus.<p>
+   <textarea id="lia1">
+Example lia1 (x:nat)(H: x <= 3):
+  x <= 7.
+Proof.
+  lia.
+Qed.
+
+Example lia2 (x y z:nat) (H1: x <= y)(H2: y <= z) :
+  x <= z.
+Proof.
+  lia. 
+Qed.
+
+Example lia_fail (x y:nat) :
+  x <= y.
+Proof.
+  (* lia *)
+  Fail lia.
+  (*lia kann diese Aussage nicht beweisen*)
+Abort.</textarea>
+
+<p>
+Später werden wir Funktionen schreiben, in denen wir eine Fallunterscheidung machen müssen, ob eine Zahl keiner als eine andere ist. Dies können wir mit dem folgenden if-then-else Konstrukt machen. <code>is_leq</code> ist eine Funktion, die entscheidet ob <code>x <= y</code>. Wir gehen hier nicht darauf ein, wie das funktioniert und warum das nötig ist.</p>
+ <p>
+Um in einem Beweis diese Fallunterscheidung dann durchzuführen, verwenden wir die Taktik <code>case_analysis_is_leq x y</code>.</p>
+<textarea id="lia3">Example smaller (x y:nat) :
+  (if (is_leq x y) then x else y) <= y.
+Proof.
+  case_analysis_is_leq x y.
+  - lia.
+  - lia.
+Qed.</textarea>
+
+<h4>Anwenden von Lemmas</h4>
+ <p> Wenn wir eine Aussage X zu zeigen wollen und ein Lemma lem haben, dass X aussagt, können wir mit der Taktik <code>apply lem</code> dieses Lemma anwenden. Die Taktik erzeugt dann Goals für alle Annahmen, die lem aufführt um X zu zeigen.</p>
+  <textarea id="apply1">
+Example apply_lemma (x:nat): 
+   (if (is_leq x 3) then x else 3) <= 7.
+Proof.
+  apply lia1.
+  apply smaller.
+Qed.</textarea>
+ <br>
+  <p><b>
+  Jetzt geht's an das Beweisen eines "richtigen" Algorithmus!
+  Wir beweisen die Korrektheit von Insertion Sort.
+  </b></p>
+</div>  
+    
+<div>
+<h2>Abschnitt 1: Definition des Sortieralgorithmus</h2>
+<h4> Aufgabe 1 </h4>	 
+<p>
+Definiere eine Funktion sort vom Typ <code>list -> list</code>, die Insertion Sort implementiert!
+</p>
+<textarea id="Sort1" >
+(* Fügt ein Element x in eine Liste ys ein. 
+Wenn ys schon sortiert ist, soll auch insert x ys sortiert sein. *)
+Fixpoint insert (x:nat) (ys:list) :=
+  (* TODO *)
+  .
+
+(* Insertion sort. *)
+Fixpoint sort (xs:list) : list :=
+  (* TODO *)
+  .
+</textarea>
+ </br>
+Keine Idee oder Probleme? Fragt uns um Hilfe, wenn ihr nicht weiterkommt!  
+  
+ 
+<h2>Abschnitt 2: Definition von Korrektheit </h2>
+Bevor wir beweisen können, dass unsere Implementierung von Insertion Sort korrekt ist, müssen wir definieren, was Korrektheit eines Sortieralgorithmus überhaupt bedeutet.
+<h4> Aufgabe 2 </h4>	 
+<p> Definiere ein Funktion sorted vom Typ <code>list -> Prop</code>, die eine Aussage erzeugt, die Sortiertheit einer Liste ausdrückt.
+</p>
+ <textarea id="Sort2" >
+ (* Überprüft ob z kleiner ist als das erste Element von xs. 
+Wenn xs leer ist, wird True zurückgegeben. *)
+Definition smaller_fst (z: nat) (xs: list) :=
+  (* TODO *) .
+
+(* Überprüft ob eine Liste von natürlichen Zahlen sortiert ist. *)
+Fixpoint sorted (xs : list) : Prop :=
+  (* TODO *) .
+ </textarea>
+ 
+ 
+ <h2>Abschnitt 3: Beweisen von Korrektheit </h2>
+ <h4> Aufgabe 3 </h4>
+ <p>Beweise, dass die Implementierung von Insertion Sort eine sortierte Liste zurück gibt.
+    Noch ein paar Hinweise:
+    <ul>
+      <li> Wenn ihr<code>simpl</code> nicht in der zu beweisenden Aussage sondern in einer Annahme H benutzen möchtet, könnt ihr dies mit <code>simpl in H</code> tun.
+      <li> Es ist sehr hilfreich, den Beweis in mehrere Lemmas zu trennen und diese dann mit <code>apply</code> anzuwenden.
+      <li> Die Induktionen hier werden etwas komplizierter. Vermutlich werdet ihr eine Induktionshypothese der Form <code>IH: X -> Y</code> bekommen. Dies stellt eine Implikation da: wenn X gilt, dann gilt auch Y. Wenn ihr nun Y zeigen sollt, könnt ihr mit <code>apply IH</code> die Induktionshypothese (wie ein Lemma) anwenden. Nun müsst ihr X zeigen.
+      <li> Für Verschachtelungen von Untergoals benutzt ihr erst '-', dann '+', dann '*'. Solltest ihr mehr brauchen müsst ihr mit { und } arbeiten um wieder mit '-' beginnen zu können. Fragt in diesem Fall am besten nach. 
+    </ul>
+    Wenn ihr Fragen habt, nicht weiter kommt, oder etwas nicht versteht, meldet euch und wir helfen. </p>
+ 
+ <textarea id="Sort3" >
+ (* Kompatibiltät von smaller_fst und > *)
+Lemma smaller_first_insert (z y:nat) (xs:list) (A: y > z) (B : smaller_fst z xs):
+     smaller_fst z (insert y xs). 
+Proof.
+  (* TODO *)
+Admitted.
+
+(* Insert erhält Sortiertheit. *)
+Lemma insert_pres (ys:list) (H: sorted ys) (x:nat):
+  sorted (insert x ys). 
+Proof.
+  (* TODO *)
+Admitted.
+
+(* Korrektheit von Sort. *)
+Lemma correctness_sort (xs: list) :
+  sorted (sort xs). 
+Proof.
+  (* TODO *)
+Admitted.
+</textarea>
+
+<h2>Abschnitt 4 (Zusatz): Noch mehr Korrektheit!</h2>
+<p> Im vorherigen Abschnitte haben wir bewiesen, dass Insertion Sort sortierte Liste erzeugt.
+    Jedoch fehlt hier noch was! Diese Aufgabe bearbeiten wir aus Zeitgründen nicht in Coq. </p>
+   
+   <h4> Aufgabe 4.1 </h4>
+   <p> Gebt ein Beispiel für einen "Sortieralgorithmus", der immer eine sortierte Liste zurück gibt, aber offensichtlich nicht das tut, was wir von einem Sortieralgorithmus erwarten.</p>
+   
+  <h4> Aufgabe 4.2 </h4>
+   <p> Formulierteine weitere Eigenschaft von <code>sort</code>, die der "Sortieralgorithmus" aus Aufgabe 4.1 nicht erfüllt.
+
+  <h4> Aufgabe 4.3</h4>
+  <p> Überleget, ob eine Funktion, die eine sortierte Liste zurück gibt und eure Eigenschaft aus 4.2 erfüllt, schon eindeutig spezifiziert ist. Falls nein, wie könnte eine Funktion aussehen, die dies alles erfüllt, aber andere Ergebnisse als <code>sort</code> liefert? Ihr müsst diese nicht unbedingt in Coq implementieren.</p>
+  
+  <h4> Aufgabe 4.4</h4>
+  <p>Versucht eine weitere Aussage zu definieren, die unseren Sortieralgorithmus eindeutig spezifiziert. Jeder andere Algorithmus, der diese Spezifikation erfüllt, muss immer die selben Ergebnisse wie <code>sort</code> liefern. Es kann sein, dass ihr Hilfsfunktionen definieren müsst. Auch diese Aufgabe müsst ihr nicht in Coq lösen.</p>
+
+</div>  
+
+<br />
+<br />
+  <p>
+    JsCoq's homepage is at github <a href="https://github.com/jscoq/jscoq">
+    https://github.com/jscoq/jscoq</a> ¡Salut!
+  </p>
+  </div> <!-- /#panel body -->
+  </div> <!-- /#document -->
+  </div> <!-- /#code-wrapper -->
+  </div> <!-- /#ide-wrapper -->
+
+  <script type="module">
+    import { JsCoq } from './node_modules/jscoq/jscoq.js';
+
+    var jscoq_ids  = ['addnC', 'lia1',  'lia3', 'apply1', 'Sort1', 'Sort2', 'Sort3'];
+
+    window.coqdoc_ids = jscoq_ids;
+
+    var jscoq_opts = {
+        prelude:       true,
+        implicit_libs: true,
+        editor:        { mode: { 'company-coq': true }, keyMap: 'default' },
+        init_pkgs:     ['init'],
+        all_pkgs:      ['coq'],
+
+        file_dialog: true,
+    };
+
+
+    JsCoq.start(jscoq_ids, jscoq_opts).then(function(res) {
+      console.log("JsCoq started", res);
+      window.load_coq_snippets();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      window.save_coq_snippets();
+    });
+  </script>
+
+
+  <script type="text/javascript">
+  // modified from https://github.com/gares/COQWS17/blob/master/footer
+  // see https://github.com/jscoq/jscoq/issues/7
+
+  function load_coq_snippets() {
+    for (i = 0; i < window.coqdoc_ids.length; ++i) {
+      document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.setValue(
+        localStorage.getItem('coq-snippet-'+window.coqdoc_ids[i]));
+    }
+  }
+
+  function save_coq_snippets() {
+    for (i = 0; i < window.coqdoc_ids.length; ++i) {
+      localStorage.setItem('coq-snippet-'+window.coqdoc_ids[i], document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.getValue());
+    }
+    console.log("Coq snippets saved.");
+  }
+
+  window.save_coq_snippets = save_coq_snippets;
+  window.load_coq_snippets = load_coq_snippets;
+
+  </script>
+
+</body>
+</html>
