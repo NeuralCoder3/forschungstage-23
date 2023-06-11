@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <meta name="description" content="Forschungstage 2023: Beweisen ist auch nur Programmieren" />
+
+  <!-- <link rel="stylesheet" href="ui-external/bootstrap.min.css" /> -->
+
+  <title>Forschungstage 2023: Beweisen ist auch nur Programmieren (Teil 1)</title>
+</head>
+
+<body>
+  <div id="ide-wrapper" class="toggled">
+    <div id="code-wrapper">
+      <div id="document">
+        <div>
+          <h1>Forschungstage 2023: Interaktives Beweisen (Teil 1)</h1>
+          <p>Wir verwenden JsCoq um Coq in HTML Webseiten verwenden zu können. Verwendung:
+          <ul>
+            <li> Nächstes Kommando ausführen: Pfeil nach Unten klicken bzw. Alt + Down
+            <li> Letztes Kommando rückgängig machen: Pfeil nach Oben klicken bzw. Alt + Up
+            <li> Alle Kommandos bis zur Position des Cursors ausführen: Cursor knopf drücken oder Alt + Enter
+          </ul>
+          Unter Mac sollte Cmd anstatt Alt funktionieren. Folgender Coq Code initialisiert Coq für uns und interessiert
+          hier nicht weiter (es kann einer Weile dauern, bis er geladen ist).</p>
+        </div>
+
+        <div>
+          <textarea id="addnC">
+From Coq Require Import Init.Prelude Unicode.Utf8.
+Notation "'inc'" := S. 
+</textarea>
+        </div>
+
+        <div>
+          <h2>Abschnitt 1: Aussagen in Coq.</h2>
+          <p>Wir beginnen mit einfachen Aussagen in Coq und Taktiken um mit Aussagen umzugehen.
+            <br>
+            In Coq heißen Aussagen Prop und mit <code>(X:Prop)</code> legen wir fest, dass X eine Aussage ist. Wenn X
+            eine Aussage ist, schreiben wir <code>(H:X)</code>
+            um X anzunehmen und diese Annahme bekommt den Namen H.
+            <br>
+            Mit der Taktik <code>assumption</code> beweisen wir eine Aussage, die wir bereits als Annahme gegeben haben.
+          </p>
+          <textarea id="L1">
+Example Assumption (X: Prop) (H: X) :  (* Hier stehen unsere Annahmen. 'Assumption' ist lediglich der Name des Beispiels. *)
+     X.                                (* Hier steht die Aussagem, die wir beweisen wollen. *)
+Proof.                                 (* Mit Proof beginnen wir den Beweis. *)
+  assumption.                           
+Qed.                                   (* Mit Qed schließen wir einen Beweis ab.*) </textarea>
+
+          <h4>Wahrheit</h4>
+          <p>Die Aussage <code>True</code> ist immer wahr und kann mit der Taktik <code>trivial</code> bewiesen werden.
+          </p>
+          <textarea id="L2">
+Example Truth :
+  True.
+Proof.
+  trivial.
+Qed. </textarea>
+
+
+
+          <h4>Konjunktion</h4>
+          <p>Wenn X und Y Aussagen sind ist X/\Y die Konjunktion von X und Y.
+            Um eine Konjunktion zu beweisen, müssen beide Teile der Konjunktion bewiesen werden.
+            Die Taktik <code>split</code> teilt eine zu beweisende Konjunktion in ihre beiden Teilaussagen auf und
+            erzeugt für jede ein neues Goal.
+            Mit dem Strich '-' deuten wir an, dass wir eines dieser Goals beweisen.</p>
+          <textarea id="L3">
+Example Conj_Split (X Y: Prop) (H1 : X)(H2: Y) :
+  X /\ Y.
+Proof.
+  split.
+  - assumption.
+  - assumption.
+Qed. </textarea>
+
+          <p>Wenn wir eine Konjunktion als Annahme haben, zerlegt die Taktik <code>destruct</code> die Konjunktion in
+            ihre beiden
+            Teilaussagen. In den rechteckigen Klammern werden die Namen für die Teilannahmen angegeben.</p>
+
+          <textarea id="L4">
+Example Conj_Destruct (X Y: Prop) (H: X /\ Y) :
+	X.
+Proof.
+  destruct H as [H1 H2].
+  assumption.
+Qed. </textarea>
+
+          <h4> Gleichheit </h4>
+
+          <p>Die Aussage <code>x = y</code> besagt dass x und y gleich sind. Die Aussage <code>x = x</code> kann mit der
+            Taktik <code>reflexivity</code> bewiesen werden.
+            Mit <code>(x:nat)</code> legen wir fest, dass x eine natürliche Zahl ist.</p>
+          <textarea id="L5">
+Example Equality_Reflexivity (x : nat) : x = x.
+Proof.
+  reflexivity.
+Qed. </textarea>
+
+          <p>Hat man <code>H: x = y</code> als Annahme, ersetzt die Taktik <code>rewrite H</code> alle Vorkommen von x
+            in der zu beweisenden Aussage durch y.
+            <textarea id="L6">
+Example Eq_Rewrite (x y : nat) (H: x = y): y = x.
+Proof.
+  rewrite H.
+  reflexivity.
+Qed.</textarea>
+
+          <h3>Übungseinheit 1: Aussagen in Coq </h3>
+          <p> Jetzt seid ihr dran! In dieser Übung sollt ihr euch mit oben vorgestellten Taktiken vertraut machen.</p>
+
+          <h4>Aufgabe 1.1</h4>
+          <textarea id="E1">
+Example Conj_Swap (X Y: Prop) (H: X /\ Y) :
+	Y /\ X.
+Proof.
+  destruct H as [H1 H2].
+  split.
+  - assumption.
+  - assumption.
+Qed. </textarea>
+
+          <h4>Aufgabe 1.2</h4>
+          <textarea id="E2">
+Example Conj_True (X: Prop) (H: X):
+  X /\ True.
+Proof.
+  split.
+  - assumption.
+  - trivial.
+Qed. </textarea>
+
+          <h4>Aufgabe 1.3</h4>
+          <textarea id="E3">
+Example Equality_Symmetric (x y : nat) (H: x = y) : y = x.
+Proof.
+  rewrite H.
+  reflexivity.
+Qed. </textarea>
+
+          <h4>Aufgabe 1.4</h4>
+          <textarea id="E4">
+Example Equality_Transitive (x y z : nat) (H1: x = y) (H2: y = z): x = z.
+Proof.
+  rewrite H1.
+  rewrite H2.
+  reflexivity.
+Qed. </textarea>
+
+        </div>
+        <div>
+          <h2>Abschnitt 2: Listen in Coq</h2>
+          <p>
+            In diesem Abschnitt betrachten wir Listen. Zur Einfachheit beschränken wir und auf Listen von natürlichen
+            Zahlen.
+            Wir definieren Listen wie folgt:
+          </p>
+          <textarea id="List1">
+Inductive list : Type :=
+|nil :list                     (* nil ist die leere List *)
+|cons (x:nat) (xs:list): list. (* cons erzeugt eine Liste mit x an erster Stelle gefolgt von der List xs *) 
+</textarea>
+
+          <p>Üblicherweise schreibt man nicht <code>cons x xs</code> sondern <code>x :: xs</code>.
+            Folgendes Kommando aktiviert diese Notation in Coq.</p>
+          <textarea id="List2">
+Infix "::" := cons (at level 60, right associativity).</textarea>
+
+          <h3> Funktionen über Listen </h3>
+          <p>Wir beginnen mit einfachen Funktionen auf Listen. Mit <code>match</code> implementieren wir eine
+            Fallunterscheidung, ob eine Liste durch <code>nil</code> oder durch <code>cons</code> erzeugt wurde. Im Fall
+            f&uuml;r cons geben die beiden folgenden Namen die Variable für die Zahl und die restliche Liste an.
+            Funktionen können in Coq auch Aussagen erzeugen. Folgende Funktion erzeugt eine Aussage, die gültig ist,
+            wenn die gegebene Liste nicht leer ist:</p>
+          <textarea id="List3">
+Definition nonempty (xs : list) : Prop :=
+  match xs with        (* Fallunterscheidung für xs *)
+  | nil => False       (* xs wurde durch nil erzeugt *)
+  | x :: xs' => True (*xs wurde durch cons x xs' erzeugt *)
+  end.</textarea>
+
+          <p>Diese Funktion berechnet die Länge einer Liste. Die Funktion <code>inc</code> erh&ouml;ht eine gegebene
+            Zahl um eins. Das Schlüsselwort <code>Fixpoint</code> ist wichtig um Coq mitzuteilen dass es sich um eine
+            rekursive Funktion handelt.</p>
+          <textarea id="List4">Fixpoint length (xs : list) : nat :=
+  match xs with
+  | nil => 0
+  | x :: xs' => inc (length xs')
+  end.</textarea>
+
+          <p>Mit <code>eval simpl in</code> können wir in Coq einen Ausdruck auswerten, z.B. die Länge einer konkreten
+            Liste berechnen:</p>
+          <textarea id="List5">Eval simpl in (length (0 :: 1 :: 2 :: nil)).
+Eval simpl in (length nil). </textarea>
+
+          Die Funktion app hängt eine Liste an eine andere an. Wir benutzen ++ als Notation für diese Funktion.
+          <textarea id="List6">Fixpoint app (xs ys : list) :=
+  match xs with
+   | nil => ys
+   | x :: xs' => x :: app xs' ys
+  end.
+ 
+Infix  "++" := app (at level 60, right associativity).</textarea>
+
+          <p>In Coq können wir Ausdrücke teilweise auswerten, wenn nicht alle Parameter einer Funktion bekannt sind. Mit
+            <code>Section</code> und <code>Variable</code> können wir festlegen, dass xs eine Variable ist.
+          </p>
+          <textarea id="List7">
+Section Eval.
+  Variable (xs : list).
+  Eval simpl in (nil ++ xs). 
+  Eval simpl in ((1 :: 2 :: nil) ++ xs).
+  Eval simpl in ((1 :: 2 :: xs) ++ (3::nil)).
+  Eval simpl in (xs ++ nil).
+End Eval. </textarea>
+
+
+          <h3> Übungseinheit 2: Definieren von Funktionen über Listen </h3>
+
+          <h4>Aufgabe 2.1</h4>
+          <p>Definiert eine Funktion map, die eine Funktion <code>f: nat -> nat </code> auf die Elemente einer Liste
+            anwendet.</p>
+          <textarea id="ListEx1">
+Fixpoint map (f : nat -> nat) (l : list) : list :=
+  match l with
+    | nil => nil
+    | x :: l' => f x :: map f l'
+  end.
+
+Eval simpl in map inc (1 :: 3 :: 4 :: nil).
+</textarea>
+
+
+          <h3> Beweisen mit Listen </h3>
+          <p>Bisher haben wir nur Funktionen auf Listen definiert. Nun wollen wir Eigenschaften dieser Funktionen
+            beweisen.
+            Wir haben bereits gesehen dass <code>nil ++ xs</code> zu xs evaluiert. Allerdings evaluiert
+            <code>xs ++ nil</code> nicht zu xs, da xs nicht bekannt ist.
+            Um zu beweisen dass <code>xs ++ nil = xs</code> benötigen wir strukturelle Induktion.
+            <br>
+            Die Taktik <code>induction xs as [|x xs']</code> führt eine Induktion über die Liste xs aus. In den eckigen
+            Klammern werden die Namen angegeben. Im Fall für nil müssen keine Variablen vergeben werden, im Fall für
+            cons wird die Zahl x und die restliche Liste xs' genannt. Die Induktionshypothese bekommt den Namen IHxs'.
+            Mit der Taktik <code>simpl</code> wird ein Ausdruck vereinfacht. Das ist ähnlich zu der Evaluierung mit
+            <code>Eval</code>.
+          </p>
+          <textarea id="ListInd1">
+Lemma app_nil (xs : list) : xs ++ nil = xs.
+Proof.
+  induction xs as [|x xs'].
+  - simpl. reflexivity.
+  - simpl. rewrite IHxs'. reflexivity.
+Qed.</textarea>
+
+          <!-- <p>++ ist assoziativ. Man kann auch den Namen der Restliste als xs wählen. Das ist etwas komfortabler. </p> -->
+          <!-- <textarea id="ListInd2"> -->
+          <!-- Lemma app_asso (xs ys zs : list) : (xs ++ ys) ++ zs = xs ++ (ys ++ zs). -->
+          <!-- Proof. -->
+          <!--   induction xs as [|x xs]. -->
+          <!--   - reflexivity. -->
+          <!--   - simpl. rewrite IHxs. reflexivity. -->
+          <!-- Qed.</textarea>  -->
+
+          <h3>Übungseinheit: Strukturelle Induktion </h3>
+
+          <h4>Aufgabe 3.1 </h4>
+
+          <p>Beweist, dass <code>|xs ++ ys| = |xs| + |ys|</code>.</p>
+          <textarea id="ListInd3">
+Lemma length_app (xs ys : list) : length (xs ++ ys) = length xs + length ys.
+Proof.
+  induction xs as [|x xs].
+  - simpl. reflexivity.
+  - simpl. rewrite IHxs. reflexivity.
+Qed.</textarea>
+
+          <h4>Aufgabe 3.2</h4>
+          <p>Beweist, dass <code>map</code> mit <code>app</code> verträglich ist:</p>
+          <textarea id="ListInd4">
+Lemma map_app (f :nat -> nat) (xs ys : list) : map f (xs ++ ys) = (map f xs) ++ (map f ys).
+Proof.
+  induction xs as [|x xs].
+  - simpl. reflexivity.
+  - simpl. rewrite IHxs. reflexivity.
+Qed.</textarea>
+        </div>
+
+        <br />
+        <br />
+        <p>
+          JsCoq's homepage is at github <a href="https://github.com/jscoq/jscoq">
+            https://github.com/jscoq/jscoq</a> ¡Salut!
+        </p>
+      </div> <!-- /#panel body -->
+    </div> <!-- /#document -->
+  </div> <!-- /#code-wrapper -->
+  </div> <!-- /#ide-wrapper -->
+
+  <script type="module">
+    import { JsCoq } from './node_modules/jscoq/jscoq.js';
+
+    var jscoq_ids = ['addnC',
+      'L1', 'L2', 'L3', 'L4', 'L5', 'L6',
+      'E1', 'E2', 'E3', 'E4',
+      'List1', 'List2', 'List3', 'List4', 'List5', 'List6', 'List7',
+      'ListEx1',
+      'ListInd1', 'ListInd3', 'ListInd4'];
+
+    window.coqdoc_ids = jscoq_ids;
+
+    var jscoq_opts = {
+      prelude: true,
+      implicit_libs: true,
+      editor: { mode: { 'company-coq': true }, keyMap: 'default' },
+      init_pkgs: ['init'],
+      all_pkgs: ['coq'],
+
+      file_dialog: true,
+    };
+
+
+    JsCoq.start(jscoq_ids, jscoq_opts).then(function (res) {
+      console.log("JsCoq started", res);
+      window.load_coq_snippets();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      window.save_coq_snippets();
+    });
+  </script>
+
+
+  <script type="text/javascript">
+    // modified from https://github.com/gares/COQWS17/blob/master/footer
+    // see https://github.com/jscoq/jscoq/issues/7
+
+    function load_coq_snippets() {
+      for (i = 0; i < window.coqdoc_ids.length; ++i) {
+        document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.setValue(
+          localStorage.getItem('coq-snippet-' + window.coqdoc_ids[i]));
+      }
+    }
+
+    function save_coq_snippets() {
+      for (i = 0; i < window.coqdoc_ids.length; ++i) {
+        localStorage.setItem('coq-snippet-' + window.coqdoc_ids[i], document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.getValue());
+      }
+      console.log("Coq snippets saved.");
+    }
+
+    window.save_coq_snippets = save_coq_snippets;
+    window.load_coq_snippets = load_coq_snippets;
+
+  </script>
+
+</body>
+
+</html>
