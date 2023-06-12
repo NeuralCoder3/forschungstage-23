@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jscoq": "^0.16.0"
+    "jscoq_new": "npm:jscoq@^0.16.0",
+    "jscoq_old": "npm:jscoq@^0.12.3"
   }
 }
