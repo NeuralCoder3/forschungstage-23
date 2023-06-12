@@ -229,13 +229,13 @@ Admitted.
   function load_coq_snippets() {
     for (i = 0; i < window.coqdoc_ids.length; ++i) {
       document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.setValue(
-        localStorage.getItem('coq-snippet-'+window.coqdoc_ids[i]));
+        localStorage.getItem('2-coq-snippet-'+window.coqdoc_ids[i]));
     }
   }
 
   function save_coq_snippets() {
     for (i = 0; i < window.coqdoc_ids.length; ++i) {
-      localStorage.setItem('coq-snippet-'+window.coqdoc_ids[i], document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.getValue());
+      localStorage.setItem('2-coq-snippet-'+window.coqdoc_ids[i], document.getElementById(window.coqdoc_ids[i]).nextSibling.CodeMirror.getValue());
     }
     console.log("Coq snippets saved.");
   }
