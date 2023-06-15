@@ -69,10 +69,12 @@ Abort.</textarea>
             Später werden wir Funktionen schreiben, in denen wir eine Fallunterscheidung machen müssen, ob eine Zahl
             keiner als eine andere ist. Dies können wir mit dem folgenden if-then-else Konstrukt machen.
             <code>is_leq</code> ist eine Funktion, die entscheidet ob <code>x <= y</code>. Wir gehen hier nicht darauf
-            ein, wie das funktioniert und warum das nötig ist.</p>
+            ein, wie das funktioniert und warum das nötig ist.
+          </p>
           <p>
             Um in einem Beweis diese Fallunterscheidung dann durchzuführen, verwenden wir die Taktik
-            <code>case_analysis_is_leq x y</code>.</p>
+            <code>case_analysis_is_leq x y</code>.
+          </p>
           <textarea id="lia3">Example smaller (x y:nat) :
   (if (is_leq x y) then x else y) <= y.
 Proof.

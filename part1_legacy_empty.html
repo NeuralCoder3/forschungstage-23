@@ -5,17 +5,15 @@
   <meta http-equiv="content-type" content="text/html;charset=utf-8" />
   <meta name="description" content="Forschungstage 2023: Beweisen ist auch nur Programmieren" />
 
-  <!-- <link rel="stylesheet" href="ui-external/bootstrap.min.css" /> -->
-
   <title>Forschungstage 2023: Beweisen ist auch nur Programmieren (Teil 1)</title>
 </head>
 
-<body>
+<body class="jscoq-main">
   <div id="ide-wrapper" class="toggled">
     <div id="code-wrapper">
       <div id="document">
         <div>
-          <h1>Forschungstage 2023: Interaktives Beweisen (Teil 1)</h1>
+          <h1>Forschungstage 2023: Beweisen ist auch nur Programmieren (Teil 1)</h1>
           <p>Wir verwenden JsCoq um Coq in HTML Webseiten verwenden zu können. Verwendung:
           <ul>
             <li> Nächstes Kommando ausführen: Pfeil nach Unten klicken bzw. Alt + Down
@@ -44,15 +42,8 @@ Notation "'inc'" := S.
             Mit der Taktik <code>assumption</code> beweisen wir eine Aussage, die wir bereits als Annahme gegeben haben.
           </p>
           <textarea id="L1">
-Example Assumption (X: Prop) (H: X) :
-(* Hier stehen unsere Annahmen. 'Assumption' ist lediglich der Name des Beispiels. *)
-     X.
-    (* Hier steht die Aussage, die wir beweisen wollen. *)
-Proof.
-(* Mit Proof beginnen wir den Beweis. *)
-  assumption.                           
-Qed.
-(* Mit Qed schließen wir einen Beweis ab.*) </textarea>
+Example Assumption (X: Prop) 
+ </textarea>
 
           <h4>Wahrheit</h4>
           <p>Die Aussage <code>True</code> ist immer wahr und kann mit der Taktik <code>trivial</code> bewiesen werden.
@@ -61,7 +52,7 @@ Qed.
 Example Truth :
   True.
 Proof.
-  trivial.
+  
 Qed. </textarea>
 
 
@@ -76,9 +67,7 @@ Qed. </textarea>
 Example Conj_Split (X Y: Prop) (H1 : X)(H2: Y) :
   X /\ Y.
 Proof.
-  split.
-  - assumption.
-  - assumption.
+    
 Qed. </textarea>
 
           <p>Wenn wir eine Konjunktion als Annahme haben, zerlegt die Taktik <code>destruct</code> die Konjunktion in
@@ -121,38 +110,30 @@ Qed.</textarea>
 Example Conj_Swap (X Y: Prop) (H: X /\ Y) :
 	Y /\ X.
 Proof.
-  destruct H as [H1 H2].
-  split.
-  - assumption.
-  - assumption.
-Qed. </textarea>
+  (* TODO *)
+Admitted. </textarea>
 
           <h4>Aufgabe 1.2</h4>
           <textarea id="E2">
 Example Conj_True (X: Prop) (H: X):
   X /\ True.
 Proof.
-  split.
-  - assumption.
-  - trivial.
-Qed. </textarea>
+  (* TODO *)
+Admitted. </textarea>
 
           <h4>Aufgabe 1.3</h4>
           <textarea id="E3">
 Example Equality_Symmetric (x y : nat) (H: x = y) : y = x.
 Proof.
-  rewrite H.
-  reflexivity.
-Qed. </textarea>
+  (* TODO *)
+Admitted. </textarea>
 
           <h4>Aufgabe 1.4</h4>
           <textarea id="E4">
 Example Equality_Transitive (x y z : nat) (H1: x = y) (H2: y = z): x = z.
 Proof.
-  rewrite H1.
-  rewrite H2.
-  reflexivity.
-Qed. </textarea>
+  (* TODO *)
+Admitted. </textarea>
 
         </div>
         <div>
@@ -229,10 +210,8 @@ End Eval. </textarea>
             anwendet.</p>
           <textarea id="ListEx1">
 Fixpoint map (f : nat -> nat) (l : list) : list :=
-  match l with
-    | nil => nil
-    | x :: l' => f x :: map f l'
-  end.
+ (* TODO *) .
+
 
 Eval simpl in map inc (1 :: 3 :: 4 :: nil).
 </textarea>
@@ -252,7 +231,8 @@ Eval simpl in map inc (1 :: 3 :: 4 :: nil).
             <code>Eval</code>.
           </p>
           <textarea id="ListInd1">
-Lemma app_nil (xs : list) : xs ++ nil = xs.
+Lemma app_nil (xs : list) :
+  xs ++ nil = xs.
 Proof.
   induction xs as [|x xs'].
   - simpl. reflexivity.
@@ -261,7 +241,8 @@ Qed.</textarea>
 
           <!-- <p>++ ist assoziativ. Man kann auch den Namen der Restliste als xs wählen. Das ist etwas komfortabler. </p> -->
           <!-- <textarea id="ListInd2"> -->
-          <!-- Lemma app_asso (xs ys zs : list) : (xs ++ ys) ++ zs = xs ++ (ys ++ zs). -->
+          <!-- Lemma app_asso (xs ys zs : list) : -->
+          <!--   (xs ++ ys) ++ zs = xs ++ (ys ++ zs). -->
           <!-- Proof. -->
           <!--   induction xs as [|x xs]. -->
           <!--   - reflexivity. -->
@@ -274,22 +255,20 @@ Qed.</textarea>
 
           <p>Beweist, dass <code>|xs ++ ys| = |xs| + |ys|</code>.</p>
           <textarea id="ListInd3">
-Lemma length_app (xs ys : list) : length (xs ++ ys) = length xs + length ys.
+Lemma length_app (xs ys : list) : 
+  length (xs ++ ys) = length xs + length ys.
 Proof.
-  induction xs as [|x xs].
-  - simpl. reflexivity.
-  - simpl. rewrite IHxs. reflexivity.
-Qed.</textarea>
+  (* TODO *)
+Admitted.</textarea>
 
           <h4>Aufgabe 3.2</h4>
           <p>Beweist, dass <code>map</code> mit <code>app</code> verträglich ist:</p>
           <textarea id="ListInd4">
-Lemma map_app (f :nat -> nat) (xs ys : list) : map f (xs ++ ys) = (map f xs) ++ (map f ys).
+Lemma map_app (f :nat -> nat) (xs ys : list) :
+  map f (xs ++ ys) = (map f xs) ++ (map f ys).
 Proof.
-  induction xs as [|x xs].
-  - simpl. reflexivity.
-  - simpl. rewrite IHxs. reflexivity.
-Qed.</textarea>
+  (* TODO *)
+Admitted.</textarea>
         </div>
 
         <br />
@@ -303,9 +282,9 @@ Qed.</textarea>
   </div> <!-- /#code-wrapper -->
   </div> <!-- /#ide-wrapper -->
 
-  <script type="module">
-    import { JsCoq } from './node_modules/jscoq_new/jscoq.js';
 
+  <script src="./node_modules/jscoq_old/ui-js/jscoq-loader.js"></script>
+  <script>
     var jscoq_ids = ['addnC',
       'L1', 'L2', 'L3', 'L4', 'L5', 'L6',
       'E1', 'E2', 'E3', 'E4',
@@ -318,6 +297,7 @@ Qed.</textarea>
     var jscoq_opts = {
       prelude: true,
       implicit_libs: true,
+      base_path: './node_modules/jscoq_old/',
       editor: { mode: { 'company-coq': true }, keyMap: 'default' },
       init_pkgs: ['init'],
       all_pkgs: ['coq'],
@@ -326,7 +306,7 @@ Qed.</textarea>
     };
 
 
-    JsCoq.start(jscoq_ids, jscoq_opts).then(function (res) {
+    JsCoq.start(jscoq_opts.base_path, './node_modules', jscoq_ids, jscoq_opts).then(function (res) {
       console.log("JsCoq started", res);
       window.load_coq_snippets();
     });

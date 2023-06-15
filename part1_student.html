@@ -42,11 +42,15 @@ Notation "'inc'" := S.
             Mit der Taktik <code>assumption</code> beweisen wir eine Aussage, die wir bereits als Annahme gegeben haben.
           </p>
           <textarea id="L1">
-Example Assumption (X: Prop) (H: X) :  (* Hier stehen unsere Annahmen. 'Assumption' ist lediglich der Name des Beispiels. *)
-     X.                                (* Hier steht die Aussagem, die wir beweisen wollen. *)
-Proof.                                 (* Mit Proof beginnen wir den Beweis. *)
+Example Assumption (X: Prop) (H: X) :
+(* Hier stehen unsere Annahmen. 'Assumption' ist lediglich der Name des Beispiels. *)
+     X.
+    (* Hier steht die Aussage, die wir beweisen wollen. *)
+Proof.
+(* Mit Proof beginnen wir den Beweis. *)
   assumption.                           
-Qed.                                   (* Mit Qed schließen wir einen Beweis ab.*) </textarea>
+Qed.
+(* Mit Qed schließen wir einen Beweis ab.*) </textarea>
 
           <h4>Wahrheit</h4>
           <p>Die Aussage <code>True</code> ist immer wahr und kann mit der Taktik <code>trivial</code> bewiesen werden.
